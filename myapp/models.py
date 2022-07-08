@@ -8,27 +8,18 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-
-
-class BloodRequest(models.Model):
-    name = models.CharField(max_length=100)
-    pincode = models.IntegerField()
-    blood_group = models.CharField(max_length=10)
-    total_unit = models.IntegerField()
-    req_date = models.DateTimeField()
-
-
 class BloodGroup(models.Model):
     """
     BloodGroup
+    
     """
-    name = models.CharField(primary_key=True, max_length=4)
-    # req_sessions = models.ManyToManyField(BloodRequestSession, through='BloodGroupSessionMapper')
+
+    name = models.CharField(primary_key=True,max_length=4)
+    # req_sessions = models.ManyToManyField('BloodRequestSession', through='BloodGroupSessionMapper')
     # users
 
     def __str__(self):
         return self.name
-
 
 class UserDetail(models.Model):
     """
@@ -67,14 +58,18 @@ class BloodRequestSession(models.Model):
     till_date = models.DateTimeField(default=now)
 
     blood_groups = models.ManyToManyField(BloodGroup, through='BloodGroupSessionMapper',
-        related_name='requests'
-        # through_fields=('request_session', 'blood_group'),
+        related_name='requests',
+       
      )
     # blood_groups = models.ForeignKey(BloodGroup, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.req_user}_{self.blood_groups}_{self.pincode}"
         #  return f"->{self.blood_groups}-[{self.unit}]-{self.start_date}"
+
+
+
+
 
 
 """
@@ -84,19 +79,9 @@ class StatusTypes(Enum):
 
 
 class BloodGroupSessionMapper(models.Model):
-    # PENDING = 0
-    # REJECTED = 1
-    # STATUS_TYPES =(
-    # (PENDING,'pending'),
-    
-    # (REJECTED,'rejected'),
-    # )
-
-
-
+   
     blood_group = models.ForeignKey( BloodGroup, on_delete=models.CASCADE, related_name='bloodgroups')
     request_session = models.ForeignKey( BloodRequestSession, on_delete=models.CASCADE, related_name='sessions')
-    # status = models.IntegerField(choices=STATUS_TYPES, default=PENDING)    
 
 
 

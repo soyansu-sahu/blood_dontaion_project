@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from .forms import BloodRequestForm
 
-from .models import BloodGroup,UserDetail,BloodRequestSession,BloodRequestStatus,BloodRequest, BloodGroupSessionMapper,User
+from myapp.models import BloodGroup,UserDetail,BloodRequestSession,BloodRequestStatus, BloodGroupSessionMapper,User
 
 
 
@@ -18,58 +18,71 @@ def home(request):
     
 
 
+# def request_blood(request):
+#     if request.method == "POST":
+#         form =BloodRequestForm(request.POST)
+
+#         if form.is_valid():
+#             req_name = form.cleaned_data["name"]
+#             pincode = form.cleaned_data["pincode"]
+#             blood_group = form.cleaned_data["blood_group"]
+#             total_unit = form.cleaned_data["total_unit"]
+#             req_date = form.cleaned_data["req_date"]
+#             reg = BloodRequestSession(req_name=req_name,pincode=pincode,blood_group=blood_group,total_unit=total_unit,req_date=req_date)
+
+#             reg.save()
+#     else:
+#         form = BloodRequestForm()
+
+#     return render(request, "request_blood.html", {"form":form} )         
 def request_blood(request):
     if request.method == "POST":
-        form =BloodRequestForm(request.POST)
-
-        if form.is_valid():
-            name = form.cleaned_data["name"]
-            pincode = form.cleaned_data["pincode"]
-            blood_group = form.cleaned_data["blood_group"]
-            total_unit = form.cleaned_data["total_unit"]
-            req_date = form.cleaned_data["req_date"]
-            reg = BloodRequest(name=name,pincode=pincode,blood_group=blood_group,total_unit=total_unit,req_date=req_date)
-
-            reg.save()
-    else:
-        form = BloodRequestForm()
-
-    return render(request, "request_blood.html", {"form":form} )         
-
+        req_user = request.POST['req_user']
+        pincode = request.POST['pincode']
+        total_unit = request.POST['total_unit']
+        req_date = request.POST['req_date']
+        till_date = request.POST['till_date']
+        blood_groups = request.POST['blood_groups']
+        blood_requests = BloodRequestSession.objects.create(name=req_user, pincode=pincode, total_unit=total_unit, req_date=req_date,till_date=till_date, blood_groups = blood_groups)
+        print(blood_requests)
+        blood_requests.save()
+        return render(request, "home.html")
+    return render(request, "request_blood.html")
 
 
 
 
 def see_all_request(request):
- 
-    datas = BloodRequestSession.objects.all()
-    maindata = []
-    print(datas)
-    for data in datas:
-        
-        temp = {"req_name":data.req_name,"pincode":data.pincode, "blood_groups":[]}
-        for bloodgroup in data.blood_groups.all():
-            temp["blood_groups"].append(bloodgroup.blood_groups)
-
-            maindata.append(temp)
-
-    return render(request,"see_all_request.html",{"data":maindata})        
+    """
+    This method shows a single user blood request sessions
+        - Request Sessions []
 
 
+    """
+    blod_req_sessions = BloodRequestSession.objects.all()
+    main_data = []
+    for session_req in blod_req_sessions:
+        _temp_req_session = {
+            "req_user":session_req.req_user,
+            "pincode" : session_req.pincode,
+            "total_unit" : session_req.total_unit,
+            "req_date" : session_req.req_date,
+            "till_date" : session_req.till_date,
+            "blood_groups": []
+        }
 
+        for blood_group in session_req.blood_groups.all():
+            _temp_req_session["blood_groups"].append(blood_group.name)
 
-    # requests = list(BloodRequestSession.objects.all())
-    # print(requests)
-    # users = User.objects.all()
-    # # for user in users:
-    #     for bloodgroup in user.blood_groups.all():
+        main_data.append(_temp_req_session)
 
+    # print(main_data)
 
-            
+    return render(request,"see_all_request.html",{"request_sessions":main_data})        
 
 
     
-    return render(request, "see_all_request.html", {'requests':requests})
+    # return render(request, "see_all_request.html", {'requests':requests})
 
 
 
@@ -119,9 +132,9 @@ def logout_user(request):
 
 
 
-def search(request):
-    data = BloodRequest.objects.all()
-    return render(request,'search.html')    
+# def search(request):
+#     data = BloodRequest.objects.all()
+#     return render(request,'search.html')    
 
 
 
