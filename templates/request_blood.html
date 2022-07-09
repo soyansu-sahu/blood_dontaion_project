@@ -5,46 +5,15 @@
 <div class="container">
     
     <h3 class="text-center"> Blood Request Form</h3>
-<!-- <form action="" method="post">
+<form action="" method="post">
+    <div class="container" >
     {% csrf_token %}
     {{form.as_p}}
+</div>
     <button type="submit" class="btn btn-success">Save</button>  
-</form> -->
-<form action="" method="post">
-    {% csrf_token %}
-    <div>
-    <input  class="form-control" name="req_user" type="text" placeholder="Requested Name">
+</form>
 </div>
-    <div>
-        <input  class="form-control" name="pincode" type="text" placeholder="Pincode">
-    </div>
-    <div>
-    <input  class="form-control" name="total_unit" type="number" placeholder="Total Unit">
-</div>
-    <div>
-    <input  class="form-control" name="req_date" type="datetime-local" id="req_date" placeholder="Enter req_date" required>
-</div>
-<div>
-    <input  class="form-control" name="till_date" type="datetime-local" id="till_date"placeholder="Enter till_date" required>
-</div>
-<div>
-    <select  class="form-control"  name="blood_groups" id="blood_groups">
-        <option value="A+">A+</option>
-        <option value="A-">A-</option>
-        <option value="B+">B+</option>
-        <option value="B-">B-</option>
-        <option value="O+">O+</option>
-        <option value="O-">O-</option>
-        <option value="AB+">AB+</option>
-        <option value="AB-">AB-</option>
 
-    </select> 
-</div>
-<div>
-    <button type="submit" value="submit" class="btn btn-success">Save</button>  
-</div>
-</form> 
-</div>
 
 
 {% endblock %}

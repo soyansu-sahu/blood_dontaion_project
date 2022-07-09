@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="container">
+    
+    <h3 class="text-center"> Blood Request Status </h3>
+    <br>
+    
+    <table class="table table-sm table-bordered">
+      <tr class="table-danger">
+        <th>Session</th>
+        <th>Donner</th>
+        <th>Invitation_status</th>
+        <th>Donation_status</th>
+        <th>Donation_date </th>
+        
+      </tr>
+      
+    {% for status_detail in status_details %}
+        <tr>
+          <td>{{status_detail.session}}</td>
+          <td>{{status_detail.donner}}</td>
+          <td>{{status_detail.invitation_status}}</td>
+          <td>{{status_detail.donation_status}}</td>
+          <td>{{status_detail.donation_date}}</td>  
+        </tr>
+      {% endfor %}
+    </table>
+
+{% endblock %}
+<button type="submit"></button>
