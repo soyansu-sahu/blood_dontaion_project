@@ -6,7 +6,7 @@
 <h2 class="text-center"> Search For Bloodgroup </h2>
 
 
-<form action="{% url 'search' %}" method="POST">
+<form action="{% url 'search' %}" name="search" method="POST">
     {% csrf_token %}
     <div class="container">
         <input name="pincode" type="text" placeholder="Pincode">
@@ -14,16 +14,25 @@
         <!-- <input name="till_date" type="datetime-local" placeholder="Till Date"> -->
 
         <select name="bloodgroup" id="bloodgroup">
-            <!-- <option value="A+">A+</option> -->
-            {% for blood_group in blood_groups %}
+            <option value="A +">A +</option>
+            <option value="B +">B +</option>
+            <option value="O +">O +</option>
+            <option value="AB +">AB +</option>
+            <option value="AB -">AB -</option>
+            <option value="A -">A -</option>
+            <option value="B -">B -</option>
+            <option value="O -">O -</option>
+
+            <!-- {% for blood_group in blood_groups %}
             <option>{{ blood_group.name }}</option>
 
-            {% endfor %}
+            {% endfor %} -->
 
         </select>
         <button type="submit" value="submit" class="btn btn-success">Submit</button>
 
     </div>
+    </form>
 
 
     <table class="table table-bordered mt-5">
@@ -31,19 +40,27 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">BloodGroup</th>
-                <th scope="col">date</th>
-                <th scope="col">Invite</th>
+                <th scope="col">contact_no</th>
+                <th scope="col">pincode</th>
+                <th scope="col">image</th>
+                <th scope="col">is_donor</th>
+                <th scope="col">last_donated_date</th>
+                
 
 
             </tr>
         </thead>
         <tbody>
-            {% for i in data %}
+            {% for query in multiple_q %}
 
 
-            <td> {{i.name}} </td>
-            <td>{{i.bloodgroup}}</td>
-            <td>{{i.date}}</td>
+            <td> {{query.name}} </td>
+            <td>{{query.bloodgroup}}</td>
+            <td>{{query.contact_no}}</td>
+            <td>{{query.pincode}}</td>
+            <td>{{query.image}}</td>
+            <td>{{query.is_donor}}</td>
+            <td>{{query.last_donated_date}}</td>
 
             </tr> 
 

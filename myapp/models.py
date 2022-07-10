@@ -91,8 +91,9 @@ class BloodGroupSessionMapper(models.Model):
 
 
 class BloodRequestStatus(models.Model):
-    session = models.ForeignKey(BloodRequestSession, on_delete=models.CASCADE)
     donner = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    session = models.ForeignKey(BloodRequestSession, on_delete=models.CASCADE)
     invitation_status = models.CharField(max_length=10, default='pending')
     donation_status = models.CharField(max_length=10, default='False')
     donation_date = models.DateTimeField(default=now)

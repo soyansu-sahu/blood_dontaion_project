@@ -1,3 +1,4 @@
+from ast import Not
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -6,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from myapp.forms import BloodRequestForm
 
-from myapp.models import BloodGroup, BloodRequestSession,BloodRequestStatus 
+from myapp.models import BloodGroup, BloodRequestSession,BloodRequestStatus,UserDetail 
 
 
 
@@ -63,6 +64,8 @@ def see_all_request(request):
 
 
 def req_status_details(request):
+    # blod_req_sessions = BloodRequestSession.objects.get().order_by('-req_date')
+
     status_details = BloodRequestStatus.objects.all()
     return render(request,'details.html',{"status_details":status_details})
 
@@ -127,16 +130,57 @@ def search(request):
 
 
 def search(request):
-    data = BloodRequestSession.objects.all() 
-    blood_groups = BloodGroup.objects.all()
-    if 'q' in request.GET:
-        q = request.GET('q')
-        multiple_q = Q(Q(blood_groups__icontains=q)|Q(pincode__icontains=q)|Q(req_date__icontains=q))
-        data = BloodRequestSession.filter(multiple_q)
+    data = request.GET.get("search")
+    print(data)
+    if data is not None:
+        user = UserDetail.objects.filter(Q(blood_group__icontains=data) & Q(pincode__icontains=data))
     else:
-        BloodRequestSession.objects.all()
-    context = {
-        'data':data,
-        'blood_groups':blood_groups
+        UserDetail.objects.all() 
+
+    context={
+
+        "data":user
+
     }    
+
     return render(request,'search.html',context)
+
+
+
+
+    # if 'q' in request.GET: 
+    #     q = request.GET.get['q']
+    #     multiple_q = Q(Q(blood_groups__icontains=q)|Q(pincode__icontains=q))
+    #     data = BloodRequestSession.objects.filter(multiple_q)
+        
+    # else:
+    #     BloodRequestSession.objects.all()
+    # context = {
+    #     'data':data
+        
+    # }    
+    # return render(request,'search.html',context)
+
+# def search(request):
+#     data = BloodRequestSession.objects.all() 
+#     blood_groups__contains = request.GET.get('blood_groups')
+#     print(blood_groups__contains)
+#     pincode__contain = request.GET.get('pincode')
+#     if blood_groups__contains is not None:
+#         data = data.filter(blood_groups__icontains=blood_groups__contains)
+
+#     if pincode__contain is not None:
+#         data = data.filter(pincode__icontains = pincode__contain)  
+
+    
+#     return render(request,'search.html',{"data":data})    
+
+
+    # if request.method == 'GET':
+    #     query = request.GET.get('query')
+    #     if query:
+    #         data=BloodRequestSession.objects.filter(blood_groups__icontains=query)
+    #         return render(request,'search.html',{"data":data})
+    #     else:
+    #         print("No information to show")
+
