@@ -4,10 +4,17 @@ from myapp.models import BloodRequestStatus,BloodRequestSession,UserDetail,Blood
 #Register your models here.
 
 admin.site.register(BloodGroup)
-admin.site.register(UserDetail)
+# admin.site.register(UserDetail)
 admin.site.register(BloodRequestSession)
 admin.site.register(BloodRequestStatus)
 admin.site.register(BloodGroupSessionMapper)
+
+
+@admin.register(UserDetail)
+class UserDetailAdmin(admin.ModelAdmin):
+    list_display = ('user', 'blood_group', 'pincode', 'last_donated_date')
+
+
 
 # class BloodRequestadmin(admin.ModelAdmin):
 #     pass

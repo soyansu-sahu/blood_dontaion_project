@@ -17,6 +17,7 @@ def home(request):
 
 
 def request_blood(request):
+    
     if request.method == "POST":
         print("request.POST : ", request.POST)
         form =BloodRequestForm(request.POST)
@@ -105,82 +106,13 @@ def logout_user(request):
     return redirect('user_login')
 
 
-def search(request):
-    """
-    GET / search/blood-donner
-        * Input 
-            - []blood_group (minimum 1 is required)(select)
-            - address
-            - date
-        * Return
-            - [
-                user {
-                    - name
-                    - blood_group
-                    - last_donated_date
-                }
-            ].order_by('last_donated_date')
-
-        * Template 
-            -Tabale
-                -data [Click] -> Invite
-                - multi select | send Invite [users] -> invitation
-    """
-    pass
-
-
-def search(request):
-    data = request.GET.get("search")
-    print(data)
-    if data is not None:
-        user = UserDetail.objects.filter(Q(blood_group__icontains=data) & Q(pincode__icontains=data))
-    else:
-        UserDetail.objects.all() 
-
-    context={
-
-        "data":user
-
-    }    
-
-    return render(request,'search.html',context)
-
-
-
-
-    # if 'q' in request.GET: 
-    #     q = request.GET.get['q']
-    #     multiple_q = Q(Q(blood_groups__icontains=q)|Q(pincode__icontains=q))
-    #     data = BloodRequestSession.objects.filter(multiple_q)
-        
-    # else:
-    #     BloodRequestSession.objects.all()
-    # context = {
-    #     'data':data
-        
-    # }    
-    # return render(request,'search.html',context)
-
-# def search(request):
-#     data = BloodRequestSession.objects.all() 
-#     blood_groups__contains = request.GET.get('blood_groups')
-#     print(blood_groups__contains)
-#     pincode__contain = request.GET.get('pincode')
-#     if blood_groups__contains is not None:
-#         data = data.filter(blood_groups__icontains=blood_groups__contains)
-
-#     if pincode__contain is not None:
-#         data = data.filter(pincode__icontains = pincode__contain)  
-
+def search_blood_doner(request):
+    form = BloodRequestForm(request.POST)
     
-#     return render(request,'search.html',{"data":data})    
-
-
-    # if request.method == 'GET':
-    #     query = request.GET.get('query')
-    #     if query:
-    #         data=BloodRequestSession.objects.filter(blood_groups__icontains=query)
-    #         return render(request,'search.html',{"data":data})
-    #     else:
-    #         print("No information to show")
+    if form.is_valid():
+        pincode = form.cleaned_data.get("pincode")
+        blood_groups = form.cleaned_data.get("blood_groups")
+        users = UserDetail.objects.filter(Q(blood_group__in = blood_groups)).filter(Q(pincode = pincode))
+        print(users)
+    return render(request,'search.html',{"multiple_q":users})
 
