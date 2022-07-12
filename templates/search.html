@@ -2,44 +2,51 @@
 {% load static %}
 {% block title %}Search{% endblock %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 {% block content %}
+
+<style>
+#multiple_select
+    {
+        height: 20%;
+        overflow-y: scroll;
+    }
+</style>
+
 <br>
 <div class="container">
 <form action="{% url 'search' %}" name="search" method="POST">
     {% csrf_token %}
-    <div class="container">
-        <strong>Enter Pincode:</strong>
-        <input name="pincode" type="text" placeholder="Pincode">
+    <div class="row" style="max-height:100px">
+        <div class="col-2">
+            <!-- Blood Group -->
+            {{form.blood_groups.label_tag}}
+            <div id="multiple_select" class="border border-3">
+                {{form.blood_groups}}
+            </div>
         </div>
-        <br>
-         <div class="multi_select_box" >
-            <strong>Select Bloodgroup:</strong> 
-             <select  class="btn-group dropright" name = bloodgroup id="bloodgroup" multiple="multiple">
-            <option value="A +">A +</option>
-            <option value="B +">B +</option>
-            <option value="O +">O +</option>
-            <option value="AB +">AB +</option>
-            <option value="AB -">AB -</option>
-            <option value="A -">A -</option>
-            <option value="B -">B -</option>
-            <option value="O -">O -</option>
-
-          
-        </select>
-        
+        <div class="col-2">
+            <!-- Unit Blood -->
+            {{form.total_unit.label_tag}}
+            {{form.total_unit}}
         </div>
-        
-        <button type="submit" value="submit" class="btn btn-success">Submit</button>    
+        <div class="col-3">
+            <!-- Pincode Area -->
+            {{form.pincode.label_tag}}
+            {{form.pincode}}
+        </div>
+        <div class="col-3">
+            <!-- Till Date -->
+            {{form.till_date.label_tag}}
+            {{form.till_date}}
+        </div>
+        <div class="col-2">
+            <button class="btn btn-outline-info" type="submit"> Search Donner</button>
+        </div>
+    </div>
+</form>
 
-     </div>
 
-
-        
-
-
-
-<table class="table table-bordered mt-5">
+<table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
             <th scope="col">Name</th>
@@ -47,37 +54,22 @@
             <th scope="col">Last_donated_date</th>
             <th scope="col">Bloodgroup</th>
             <th scope="col">Invite</th>
-
-
-
-
         </tr>
     </thead>
     <tbody>
-        {% for query in multiple_q %}
-
-
-        <td> {{query.user}} </td>
-        <td>{{query.contact_no}}</td>
-        <td>{{query.last_donated_date}}</td>
-        <td>{{query.blood_group}}</td>
-        <td><button type="button" class="btn btn-info">Invite</button></td>
-
-
+        {% for query in form %}
+        <tr>
+            <td> {{query.user}} </td>
+            <td>{{query.contact_no}}</td>
+            <td>{{query.last_donated_date}}</td>
+            <td>{{query.blood_group}}</td>
+            <td><button type="button" class="btn btn-info">Invite</button></td>
         </tr>
-
-
         {% endfor %}
     </tbody>
-
-
-
-
-
-
 </table>
 
-<script src='js/script.js'></script>   
+  
 {% endblock %}
 
 

@@ -20,7 +20,6 @@ def home(request):
 def request_blood(request):
     
     if request.method == "POST":
-        print("request.POST : ", request.POST)
         form =BloodRequestForm(request.POST)
 
         if form.is_valid():
@@ -108,14 +107,22 @@ def logout_user(request):
 
 
 def search_blood_doner(request):
-    form = BloodRequestForm(request.POST)
-    
-    if form.is_valid():
-        pincode = form.cleaned_data.get("pincode")
-        blood_groups = form.cleaned_data.get("blood_groups")
-        users = UserDetail.objects.filter(Q(blood_group__in = blood_groups)).filter(Q(pincode = pincode))
-        print(users)
-    return render(request,'search.html',{"multiple_q":users})
+    if request.method == 'GET':
+        form = BloodRequestForm()
+    else:
+        form = BloodRequestForm(request.POST)
+        
+        if form.is_valid():
+            pincode = form.cleaned_data.get("pincode")
+            blood_groups = form.cleaned_data.get("blood_groups")
+            users = UserDetail.objects.filter(Q(blood_group__in = blood_groups)).filter(Q(pincode = pincode))
+            print(users)
+        
+    return render(request,'search.html',{"form":form})
+
+
+
+
 
 def send_mail_user(request):
     send_mail(
@@ -128,5 +135,6 @@ def send_mail_user(request):
 
 
     )
+    return render(request,'send_mail.html')
 
     

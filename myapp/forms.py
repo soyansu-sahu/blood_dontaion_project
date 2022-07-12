@@ -29,5 +29,4 @@ class BloodRequestForm(forms.ModelForm):
             'total_unit':{'required':"Enter total_unit"},
             'req_date':{'required':"Enter req_date"},
             'till_date':{'required':"Enter till_date"},
-            'blood_groups':{'required':"Enter blood_group"},
         }
