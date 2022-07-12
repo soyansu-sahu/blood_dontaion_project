@@ -28,6 +28,7 @@ urlpatterns = [
     path('user_login/', views.user_login, name ='user_login'),
     path('search/',views.search_blood_doner,name='search'),
     path('status_detail/',views.req_status_details,name='view_detail'),
+    path('send_mail/',views.send_mail_user,name='send_mail'),
     
 
 ]

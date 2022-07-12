@@ -1,31 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Search{% endblock %}
 
-
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 {% block content %}
-
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
-
-
-<h2 class="text-center"> Search For Bloodgroup </h2>
-
-<select class="selectpicker" multiple data-live-search="true" multiple="multiple">
-    <option>Mustard</option>
-    <option>Ketchup</option>
-    <option>Relish</option>
-  </select>
-
-
-<!-- <form action="{% url 'search' %}" name="search" method="POST">
+<br>
+<div class="container">
+<form action="{% url 'search' %}" name="search" method="POST">
     {% csrf_token %}
     <div class="container">
+        <strong>Enter Pincode:</strong>
         <input name="pincode" type="text" placeholder="Pincode">
-        <!-- <input name="total_unit" type="number" placeholder="Total Unit"> -->
-        <!-- <input name="till_date" type="datetime-local" placeholder="Till Date"> -->
-        <!-- <div class="container">
-            <strong>Select Bloodgroup:</strong> -->
-            <!-- <select name = bloodgroup id="multiple-checkboxes" multiple="multiple">
+        </div>
+        <br>
+         <div class="multi_select_box" >
+            <strong>Select Bloodgroup:</strong> 
+             <select  class="btn-group dropright" name = bloodgroup id="bloodgroup" multiple="multiple">
             <option value="A +">A +</option>
             <option value="B +">B +</option>
             <option value="O +">O +</option>
@@ -36,29 +26,16 @@
             <option value="O -">O -</option>
 
           
-        </select> -->
-            <!-- <select class="select" multiple>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-                <option value="4">Four</option>
-                <option value="5">Five</option>
-                <option value="6">Six</option>
-                <option value="7">Seven</option>
-                <option value="8">Eight</option>
-            </select>
-        </div> -->
-        <!-- <script type="text/javascript">  
-        $(document).ready(function() {  
-            $('#multiple-checkboxes').multiselect();  
-        });  
-    </script>   -->
+        </select>
+        
+        </div>
+        
+        <button type="submit" value="submit" class="btn btn-success">Submit</button>    
 
-        <!-- <button type="submit" value="submit" class="btn btn-success">Submit</button>
+     </div>
 
-    </div>
-</form> --> 
 
+        
 
 
 
@@ -69,6 +46,7 @@
             <th scope="col">Contact_no</th>
             <th scope="col">Last_donated_date</th>
             <th scope="col">Bloodgroup</th>
+            <th scope="col">Invite</th>
 
 
 
@@ -83,6 +61,7 @@
         <td>{{query.contact_no}}</td>
         <td>{{query.last_donated_date}}</td>
         <td>{{query.blood_group}}</td>
+        <td><button type="button" class="btn btn-info">Invite</button></td>
 
 
         </tr>
@@ -97,20 +76,9 @@
 
 
 </table>
-<script>
-    $(function(){
-  $('.selectpicker').multiselect();
-});
-</script>
-<!-- $('select').selectpicker(); -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>  
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>  
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-
+<script src='js/script.js'></script>   
 {% endblock %}
+
 
 

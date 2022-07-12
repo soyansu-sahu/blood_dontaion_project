@@ -6,6 +6,7 @@ from myapp.forms import SignUpForm
 from django.contrib import messages
 from django.db.models import Q
 from myapp.forms import BloodRequestForm
+from django.core.mail import send_mail
 
 from myapp.models import BloodGroup, BloodRequestSession,BloodRequestStatus,UserDetail 
 
@@ -116,3 +117,16 @@ def search_blood_doner(request):
         print(users)
     return render(request,'search.html',{"multiple_q":users})
 
+def send_mail_user(request):
+    send_mail(
+        'testing email',
+        'This is used for testing purpose',
+        'soyansuwork@gmail.com',
+        ['ssoyansu@gmail.com'],
+        fail_silently=False,
+
+
+
+    )
+
+    
