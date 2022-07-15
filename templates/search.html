@@ -1,76 +1,134 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block title %}Search{% endblock %}
 
+{% block title %}Search{% endblock %}
 {% block content %}
 
 <style>
-#multiple_select
-    {
-        height: 20%;
+    #multiple_select {
+        height: 70px;
         overflow-y: scroll;
     }
+
+</style>
+<style>
+    input.select_user {
+        width: 20px;
+        height: 20px;
+
+    }
+
 </style>
 
 <br>
-<div class="container">
-<form action="{% url 'search' %}" name="search" method="POST">
-    {% csrf_token %}
-    <div class="row" style="max-height:100px">
-        <div class="col-2">
-            <!-- Blood Group -->
-            {{form.blood_groups.label_tag}}
-            <div id="multiple_select" class="border border-3">
-                {{form.blood_groups}}
+<div>
+    <form action="{% url 'search' %}" name="search" method="POST">
+        {% csrf_token %}
+        <div style="height:fit-content;">
+            <div class="row">
+                <div class="col-3">
+                    <!-- Blood Group -->
+                    {{form.blood_groups.label_tag}}
+                    <div id="multiple_select" class="border border-3">
+                        {{form.blood_groups}}
+                    </div>
+                </div>
+                <div class="col-2">
+                    Unit Blood
+                    {{form.total_unit.label_tag}}
+                    {{form.total_unit}}
+                </div>
+                <div class="col-3">
+                    <!-- Pincode Area -->
+                    {{form.pincode.label_tag}} <br>
+                    {{form.pincode}}
+                </div>
+                <div class="col-2">
+                    <!--  Till Date -->
+                    {{form.till_date.label_tag}} <br>
+                    {{form.till_date}}
+                </div>
+                <div class="col-2">
+                    <br>
+                    <button class="btn btn-outline-info" type="submit"> Search Donner</button>
+                    <button id="inv-btn" style="display: none" class="btn btn-success mt-3" type="submit"> Send Invitation</button>
+                </div>
             </div>
         </div>
-        <div class="col-2">
-            <!-- Unit Blood -->
-            {{form.total_unit.label_tag}}
-            {{form.total_unit}}
-        </div>
-        <div class="col-3">
-            <!-- Pincode Area -->
-            {{form.pincode.label_tag}}
-            {{form.pincode}}
-        </div>
-        <div class="col-3">
-            <!-- Till Date -->
-            {{form.till_date.label_tag}}
-            {{form.till_date}}
-        </div>
-        <div class="col-2">
-            <button class="btn btn-outline-info" type="submit"> Search Donner</button>
-        </div>
-    </div>
-</form>
-
-
+    </form>
+</div>
+<br>
 <table class="table table-bordered">
-    <thead class="thead-dark">
-        <tr>
+    <thead>
+        <tr class="thead-dark">
             <th scope="col">Name</th>
             <th scope="col">Contact_no</th>
             <th scope="col">Last_donated_date</th>
             <th scope="col">Bloodgroup</th>
-            <th scope="col">Invite</th>
+            <th scope="col">Select All <input onclick="selectAll()" id="select_all_donner" type="checkbox"></th>
         </tr>
     </thead>
     <tbody>
-        {% for query in form %}
+        {% for user in users %}
         <tr>
-            <td> {{query.user}} </td>
-            <td>{{query.contact_no}}</td>
-            <td>{{query.last_donated_date}}</td>
-            <td>{{query.blood_group}}</td>
-            <td><button type="button" class="btn btn-info">Invite</button></td>
+            <td>{{user.user}} </td>
+            <td>{{user.contact_no}}</td>
+            <td>{{user.last_donated_date}}</td>
+            <td>{{user.blood_group}}</td>
+            <td><input type="checkbox" class="select_user"></td>
         </tr>
         {% endfor %}
+
     </tbody>
 </table>
+<script>
+    function selectAll() {
+        /*
+            This function handels the select all feature to send invite to donate blood.
+        */
+        isCheck = $(`#select_all_donner`).prop("checked");
+        
+        if (isCheck) {
+            $(`.select_user`).prop('checked', true);
+            
 
-  
+        } else {
+            $(`.select_user`).prop('checked', false);
+        }
+    }
+
+    $(document).ready(function () {
+        // When page completly loads 
+
+        $(`.select_user`).click(function () {
+            /*
+                This function used to update `select_all` status
+            */
+            console.log("sel", $(`.select_user`).length, $(`.select_user:checked`).length)
+            if ($(`.select_user`).length == $(`.select_user:checked`).length) {
+                $(`#select_all_donner`).prop('checked', true);
+            } else {
+                $(`#select_all_donner`).prop('checked', false);
+            }
+
+            // show send-invitation button
+            if ($(`.select_user`).length >= 1) {
+                $(`#inv-btn`).toggle()
+            } else {
+                $(`#inv-btn`).toggle()
+            }
+
+        });
+    });
+
+    $(document).ready(function () {
+        $('#inv-btn').click(function(){
+            $("input[type=checkbox]:checked").each(function (){ 
+                console.log($(`#select_all_donner`).val() + " is checked");
+
+
+        });
+    });
+});
+</script>
+
 {% endblock %}
-
-
-

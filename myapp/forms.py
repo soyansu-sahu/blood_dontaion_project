@@ -1,3 +1,4 @@
+from cmath import log
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -17,16 +18,14 @@ class BloodRequestForm(forms.ModelForm):
     This is a form class for blood request session
     """
     blood_groups = forms.MultipleChoiceField(choices = [(each, str(each.name)) for each in BloodGroup.objects.all()], widget=forms.CheckboxSelectMultiple)
-
     class Meta:
         model = BloodRequestSession
-        fields = ['req_user', 'pincode', 'total_unit', 'req_date','till_date', 'blood_groups']
-        labels = {'req_user':'Enter name','pincode':'Enter pincode','total_unit':'Enter total_unit'}
+        fields = ['pincode', 'total_unit', 'till_date', 'blood_groups']
+        # labels = {'req_user':'Enter name','pincode':'Enter pincode','total_unit':'Enter total_unit'}
         widgets = {'req_user': forms.HiddenInput()}
         error_messages = {
-            'req_user':{'required':"Enter name"},
             'pincode':{'required':"Enter pincode"},
             'total_unit':{'required':"Enter total_unit"},
-            'req_date':{'required':"Enter req_date"},
             'till_date':{'required':"Enter till_date"},
+            'blood_groups':{'required':"Enter till_date"},
         }

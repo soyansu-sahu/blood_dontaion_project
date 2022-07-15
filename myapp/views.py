@@ -20,20 +20,26 @@ def home(request):
 def request_blood(request):
     
     if request.method == "POST":
-        form =BloodRequestForm(request.POST)
+        form = BloodRequestForm(request.POST)
 
         if form.is_valid():
+            print("hi")
             req_user = form.cleaned_data.get("req_user")
             pincode = form.cleaned_data.get("pincode")
             total_unit = form.cleaned_data.get("total_unit")
             req_date = form.cleaned_data.get("req_date")
             blood_groups = form.cleaned_data.get("blood_groups")
             bloodgroups = BloodGroup.objects.filter(name__in=blood_groups)
-            blood_requests = BloodRequestSession.objects.create(req_user=req_user,pincode=pincode,total_unit=total_unit,req_date=req_date)                        
+            blood_requests = BloodRequestSession.objects.create(req_user=req_user,pincode=pincode,total_unit=total_unit,req_date=req_date)     
+
+            print(pincode,req_user)                   
+            
             for bloodgroup in bloodgroups:
                blood_requests.blood_groups.add(bloodgroup)
             blood_requests.save()
             return redirect("all_request")
+        else:
+            print("hi from else")
     else:
         form = BloodRequestForm(initial={'req_user': request.user.id})
 
@@ -107,20 +113,23 @@ def logout_user(request):
 
 
 def search_blood_doner(request):
-    if request.method == 'GET':
-        form = BloodRequestForm()
-    else:
+    
+    users=[]
+    if request.method == "POST":
         form = BloodRequestForm(request.POST)
         
         if form.is_valid():
             pincode = form.cleaned_data.get("pincode")
             blood_groups = form.cleaned_data.get("blood_groups")
-            users = UserDetail.objects.filter(Q(blood_group__in = blood_groups)).filter(Q(pincode = pincode))
-            print(users)
+            users = UserDetail.objects.filter(Q(blood_group__in = blood_groups)).filter(Q(pincode = pincode)).all()
+    else:
+        form = BloodRequestForm()
         
-    return render(request,'search.html',{"form":form})
+    
+    # print(users)
 
-
+        
+    return render(request,'search.html',{"form":form, 'users':users})
 
 
 
