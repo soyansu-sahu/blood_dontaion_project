@@ -21,7 +21,7 @@
 
 <br>
 <div>
-    <form action="{% url 'search' %}" name="search" method="POST">
+    <form id="form_id" action="{% url 'search' %}" name="search" method="POST">
         {% csrf_token %}
         <div style="height:fit-content;">
             <div class="row">
@@ -50,7 +50,7 @@
                 <div class="col-2">
                     <br>
                     <button class="btn btn-outline-info" type="submit"> Search Donner</button>
-                    <button id="inv-btn" style="display: none" class="btn btn-success mt-3" type="submit"> Send Invitation</button>
+                    <button id="inv-btn" onclick="sendInvitation()" style="display: none" class="btn btn-success mt-3" type="button"> Send Invitation</button>
                 </div>
             </div>
         </div>
@@ -70,11 +70,11 @@
     <tbody>
         {% for user in users %}
         <tr>
-            <td>{{user.user}} </td>
+            <td>{{user.user}}</td>
             <td>{{user.contact_no}}</td>
             <td>{{user.last_donated_date}}</td>
             <td>{{user.blood_group}}</td>
-            <td><input type="checkbox" class="select_user"></td>
+            <td><input id="{{user.user.id}}" type="checkbox" name="select_name"  class="select_user"></td>
         </tr>
         {% endfor %}
 
@@ -86,15 +86,56 @@
             This function handels the select all feature to send invite to donate blood.
         */
         isCheck = $(`#select_all_donner`).prop("checked");
-        
+
         if (isCheck) {
             $(`.select_user`).prop('checked', true);
-            
-
         } else {
             $(`.select_user`).prop('checked', false);
         }
+        // show send-invitation button
+        if ($(`.select_user:checked`).length >= 1) {
+            $(`#inv-btn`).prop('style', 'display:block')
+        } else {
+            $(`#inv-btn`).prop('style', 'display:none')
+        }
     }
+
+    function sendInvitation() {
+        console.log("sendInvitation()")
+        result = Object();
+        $.each($('form').serializeArray(), function () {
+            if (this.name == 'blood_groups') {
+                if (!(this.name in result)) {
+                    result[this.name] = Array()
+                }
+                result[this.name].push(this.value)
+            } else {
+                result[this.name] = this.value
+            }
+        })
+
+        console.log("body : ", result)
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'send_invitation' %}",
+            data:{
+                "formData":  JSON.stringify(result)
+            },
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            success: function (data) {
+                console.log(data)
+            }
+        }, {});
+        return false; //<---- move it here
+
+    }
+
+
+
+
 
     $(document).ready(function () {
         // When page completly loads 
@@ -111,24 +152,16 @@
             }
 
             // show send-invitation button
-            if ($(`.select_user`).length >= 1) {
-                $(`#inv-btn`).toggle()
+            if ($(`.select_user:checked`).length >= 1) {
+                $(`#inv-btn`).prop('style', 'display:block')
             } else {
-                $(`#inv-btn`).toggle()
+                $(`#inv-btn`).prop('style', 'display:none')
             }
 
         });
+
     });
 
-    $(document).ready(function () {
-        $('#inv-btn').click(function(){
-            $("input[type=checkbox]:checked").each(function (){ 
-                console.log($(`#select_all_donner`).val() + " is checked");
-
-
-        });
-    });
-});
 </script>
 
 {% endblock %}

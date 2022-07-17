@@ -29,6 +29,6 @@ urlpatterns = [
     path('search/',views.search_blood_doner,name='search'),
     path('status_detail/',views.req_status_details,name='view_detail'),
     path('send_mail/',views.send_mail_user,name='send_mail'),
-    
+    path('donate/send_invitation/',views.send_donation_invitation,name='send_invitation')
 
 ]

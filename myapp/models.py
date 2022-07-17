@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from http.client import ACCEPTED
+from pyexpat import model
 from django.utils.timezone import now
 from statistics import mode
 from django.db import models
@@ -34,7 +35,7 @@ class UserDetail(models.Model):
     pincode = models.IntegerField()
     image = models.ImageField(upload_to='static/images', blank=True)
     is_donor = models.BooleanField(default=True)
-    last_donated_date = models.DateTimeField(default=now)
+    last_donated_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
@@ -58,17 +59,14 @@ class BloodRequestSession(models.Model):
     till_date = models.DateTimeField(default=now)
 
     blood_groups = models.ManyToManyField(BloodGroup, through='BloodGroupSessionMapper',
-        related_name='requests',
-       
-     )
-    # blood_groups = models.ForeignKey(BloodGroup, on_delete=models.CASCADE)
+        related_name='requests', 
+    )
+
+    # user_invitation_status = models.ForeignKey('BloodRequestStatus', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.req_user}_{self.blood_groups}_{self.pincode}"
+        return f"{self.id}_{self.req_user}"
         #  return f"->{self.blood_groups}-[{self.unit}]-{self.start_date}"
-
-
-
 
 
 
@@ -83,22 +81,25 @@ class BloodGroupSessionMapper(models.Model):
     blood_group = models.ForeignKey( BloodGroup, on_delete=models.CASCADE, related_name='bloodgroups')
     request_session = models.ForeignKey( BloodRequestSession, on_delete=models.CASCADE, related_name='sessions')
 
-
-
     def __str__(self):
         #  ["A+, O+"]
         return f'{self.blood_group.__str__}_{self.request_session.__str__}'
 
 
 class BloodRequestStatus(models.Model):
+    INVITATION_STATUS_CHOICES = (
+        ("PENDING", "pending"),
+        ("ACCEPTED", "accepted"),
+        ("DENIED", "denied"),
+    )
+
+
     donner = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-
+    blood_group = models.ForeignKey( BloodGroup, on_delete=models.CASCADE, related_name='bloodgroup')
     session = models.ForeignKey(BloodRequestSession, on_delete=models.CASCADE)
-    invitation_status = models.CharField(max_length=10, default='pending')
-    donation_status = models.CharField(max_length=10, default='False')
-    donation_date = models.DateTimeField(default=now)
-
-    # inv_response = models.CharField(max_length=100,default=StatusTypes.PENDING)
-
+    invitation_status = models.CharField(max_length=10, default='PENDING') # ['pending', 'accepted', 'denied']
+    donation_status = models.BooleanField(default=False) # [True, False]
+    donation_date = models.DateField(null=True, blank=True)
+    
     def __str__(self):
         return f"{self.invitation_status}_{self.donation_status}"

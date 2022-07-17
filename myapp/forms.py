@@ -17,7 +17,11 @@ class BloodRequestForm(forms.ModelForm):
     """
     This is a form class for blood request session
     """
-    blood_groups = forms.MultipleChoiceField(choices = [(each, str(each.name)) for each in BloodGroup.objects.all()], widget=forms.CheckboxSelectMultiple)
+    try:
+        blood_groups = forms.MultipleChoiceField(choices = [(each, str(each.name)) for each in BloodGroup.objects.all()], widget=forms.CheckboxSelectMultiple)
+    except Exception as E:
+        print("[ EXCEPTION ] : ", E)
+        blood_groups = None
     class Meta:
         model = BloodRequestSession
         fields = ['pincode', 'total_unit', 'till_date', 'blood_groups']
@@ -27,5 +31,5 @@ class BloodRequestForm(forms.ModelForm):
             'pincode':{'required':"Enter pincode"},
             'total_unit':{'required':"Enter total_unit"},
             'till_date':{'required':"Enter till_date"},
-            'blood_groups':{'required':"Enter till_date"},
+            'blood_groups':{'required':False},
         }
