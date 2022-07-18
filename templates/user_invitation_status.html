@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<div class="container">
+    
+    <h3 class="text-center"> Blood Request Status </h3>
+    <br>
+    {{session_data.req_user}} | {{session_data.pincode}} | {{session_data.total_unit}} | {{session_data.req_date}} | {{session_data.till_date}} | {{blood_groups}} 
+    <table class="table table-sm table-bordered">
+      <tr class="table-danger">
+        <th>donner</th>
+        <th>blood_group</th>
+        <th>session</th>
+        <th>invitation_status</th>
+        <th>donation_status </th>
+        <th>donation_date </th>
+      </tr>
+      
+    {% for user in user_invitation_data %}
+    <!-- BloodRequestStatus -->
+        <tr>
+          <td>{{user.donner}}</td>
+          <td>{{user.blood_group}}</td>
+          <td>{{user.session}}</td>
+          <td>{{user.invitation_status}}</td>
+          <td>{{user.donation_status}}</td>  
+          <td>{{user.donation_date}}</td>  
+        </tr>
+      {% endfor %}
+    </table>
+
+{% endblock %}
+<button type="submit"></button>

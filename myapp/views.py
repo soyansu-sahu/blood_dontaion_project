@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.db.models import Q
 from myapp.forms import BloodRequestForm
 from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 
 from myapp.models import BloodGroup, BloodRequestSession,BloodRequestStatus,UserDetail
 
@@ -56,6 +58,7 @@ def see_all_request(request):
     main_data = []
     for session_req in blod_req_sessions:
         _temp_req_session = {
+            "id": session_req.id,
             "req_user":session_req.req_user,
             "pincode" : session_req.pincode,
             "total_unit" : session_req.total_unit,
@@ -68,14 +71,21 @@ def see_all_request(request):
             _temp_req_session["blood_groups"].append(blood_group.name)
         main_data.append(_temp_req_session)
 
-    return render(request,"see_all_request.html",{"request_sessions":main_data})        
+    return render(request,"see_all_request.html",{"request_sessions": main_data})        
 
 
-def req_status_details(request):
-    # blod_req_sessions = BloodRequestSession.objects.get().order_by('-req_date')
+def view_session_detail(request, id):
+    session_data = BloodRequestSession.objects.get(id=id)#.order_by('-req_date')
+    user_invitation_data = BloodRequestStatus.objects.filter(session=session_data.id).all()
+    blood_groups = []
+    for blood_group in session_data.blood_groups.all():
+        blood_groups.append(blood_group.name)
 
-    status_details = BloodRequestStatus.objects.all()
-    return render(request,'details.html',{"status_details":status_details})
+    return render(request,'user_invitation_status.html',{
+        'user_invitation_data':user_invitation_data,
+        'session_data': session_data,
+        'blood_groups': blood_groups
+        })
 
 
 
@@ -105,7 +115,7 @@ def search_blood_doner(request):
 
 
 def send_donation_invitation(request):
-
+    print(request.POST)
     if request.method == 'POST':
         form_data = json.loads(request.POST.get("formData"))
         req_user = request.user
@@ -114,7 +124,7 @@ def send_donation_invitation(request):
         till_date = form_data['till_date']
         blood_groups = form_data['blood_groups'] # ['A +', 'O +']
         matched_bloodgroups = BloodGroup.objects.filter(name__in=blood_groups)
-        print(pincode ,total_unit, till_date, blood_groups, matched_bloodgroups)
+        # print(pincode ,total_unit, till_date, blood_groups, matched_bloodgroups)
         request_session = BloodRequestSession.objects.create(req_user=req_user,pincode=pincode,total_unit=total_unit,till_date=till_date)
         
         for _bloodgroup in matched_bloodgroups:
@@ -122,9 +132,22 @@ def send_donation_invitation(request):
         request_session.save(),
         print(request_session.__dict__)
 
+        selected_users = json.loads(request.POST.get("selected_users"))
+        print("selected_users > ", type(selected_users), selected_users)
+
+        for user_id in selected_users:
+            _user = User.objects.get(id=int(user_id))
+            _user_deatils = UserDetail.objects.get(user=_user)
+            obj = BloodRequestStatus.objects.create(
+                donner=_user, 
+                blood_group=_user_deatils.blood_group,
+                session=request_session,
+                )
+            obj.save()
 
     return JsonResponse(data={
         "message":"Invitation Sent Successfully",
+        "url": f"/invitation_status_detail/{request_session.id}"
     })  
 
 

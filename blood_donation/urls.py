@@ -27,8 +27,9 @@ urlpatterns = [
     path('sign_up/', views.sign_up, name ='sign_up'),
     path('user_login/', views.user_login, name ='user_login'),
     path('search/',views.search_blood_doner,name='search'),
-    path('status_detail/',views.req_status_details,name='view_detail'),
     path('send_mail/',views.send_mail_user,name='send_mail'),
-    path('donate/send_invitation/',views.send_donation_invitation,name='send_invitation')
+    path('donate/send_invitation/',views.send_donation_invitation,name='send_invitation'),
+    path('invitation_status_detail/<int:id>', views.view_session_detail, name='view_session_detail'),
+
 
 ]

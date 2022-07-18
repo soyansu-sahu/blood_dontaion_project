@@ -74,7 +74,7 @@
             <td>{{user.contact_no}}</td>
             <td>{{user.last_donated_date}}</td>
             <td>{{user.blood_group}}</td>
-            <td><input id="{{user.user.id}}" type="checkbox" name="select_name"  class="select_user"></td>
+            <td><input id="{{user.user.id}}" type="checkbox" name="select_name" class="select_user"></td>
         </tr>
         {% endfor %}
 
@@ -116,22 +116,35 @@
 
         console.log("body : ", result)
 
+        var id_data = [];
+        $('.select_user:checked').each(function () {
+            id_data.push($(this).attr('id'))
+        })
+        console.log(id_data)
+
         $.ajax({
             type: "POST",
             url: "{% url 'send_invitation' %}",
-            data:{
-                "formData":  JSON.stringify(result)
+            data: {
+                "formData": JSON.stringify(result),
+                "selected_users": JSON.stringify(id_data),
             },
             headers: {
                 "X-CSRFToken": '{{ csrf_token }}'
             },
             success: function (data) {
-                console.log(data)
+                alert(data['message'])
+                window.location.href = data['url']
             }
         }, {});
         return false; //<---- move it here
-
     }
+
+
+
+
+
+
 
 
 

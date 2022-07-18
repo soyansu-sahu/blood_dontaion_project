@@ -26,7 +26,7 @@
           <td>{{session.req_date}}</td>
           <td>{{session.till_date}}</td>
           <td>{{session.blood_groups}}</td>
-          <td><button type="button" class="btn btn-info"><a href="{% url 'view_detail' %}">view_status</a></button></td>
+          <td><button type="button" class="btn btn-info"><a href="invitation_status_detail/{{session.id}}">view_status</a></button></td>
         </tr>
       {% endfor %}
     </table>

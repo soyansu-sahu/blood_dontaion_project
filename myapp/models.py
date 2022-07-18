@@ -6,6 +6,8 @@ from django.utils.timezone import now
 from statistics import mode
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
+
 
 
 # Create your models here.
@@ -55,14 +57,15 @@ class BloodRequestSession(models.Model):
     req_user = models.ForeignKey(User, on_delete=models.CASCADE)
     pincode = models.IntegerField()
     total_unit = models.PositiveIntegerField(default=1)  # 1unit = 500ml blood
-    req_date = models.DateTimeField(max_length=100, default=now)
+    req_date = models.DateTimeField(max_length=100, default=datetime.utcnow)
     till_date = models.DateTimeField(default=now)
+
 
     blood_groups = models.ManyToManyField(BloodGroup, through='BloodGroupSessionMapper',
         related_name='requests', 
     )
 
-    # user_invitation_status = models.ForeignKey('BloodRequestStatus', on_delete=models.CASCADE)
+    # donner_invitation_status = models.OneToManyField('BloodRequestStatus', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.id}_{self.req_user}"
@@ -92,8 +95,6 @@ class BloodRequestStatus(models.Model):
         ("ACCEPTED", "accepted"),
         ("DENIED", "denied"),
     )
-
-
     donner = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     blood_group = models.ForeignKey( BloodGroup, on_delete=models.CASCADE, related_name='bloodgroup')
     session = models.ForeignKey(BloodRequestSession, on_delete=models.CASCADE)
