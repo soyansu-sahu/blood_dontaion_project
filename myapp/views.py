@@ -1,26 +1,17 @@
-import email
 import json
-from ast import Not
-import py_compile
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render,redirect
+from django.contrib import messages
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from myapp.service.email_service import send_mail_user
-from myapp.forms import SignUpForm
-from django.contrib import messages
-from django.db.models import Q
-from myapp.forms import BloodRequestForm
-from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.forms.models import model_to_dict
-from django.template import Context
-
-
-
-
 
 from myapp.models import BloodGroup, BloodRequestSession,BloodRequestStatus,UserDetail
+from myapp.service.email_service import send_mail_user
+from myapp.forms import SignUpForm
+from myapp.forms import BloodRequestForm
 
 
 
@@ -51,10 +42,8 @@ def request_blood(request):
             return redirect("all_request")
         else:
             print("hi from else")
-    else:
-        form = BloodRequestForm(initial={'req_user': request.user.id})
 
-    return render(request, "request_blood.html", {"form":form} ) 
+    return redirect("search")
 
 
 def see_all_request(request):
@@ -115,15 +104,12 @@ def search_blood_doner(request):
     else:
         form = BloodRequestForm()
         
-    
-
-
         
     return render(request,'search.html',{"form":form, 'users':users})
 
 
 def send_donation_invitation(request):
-    print(request.POST)
+    # print(request.POST)
     if request.method == 'POST':
         form_data = json.loads(request.POST.get("formData"))
         req_user = request.user
@@ -139,12 +125,14 @@ def send_donation_invitation(request):
             request_session.blood_groups.add(_bloodgroup)
         request_session.save(),
         selected_users = json.loads(request.POST.get("selected_users"))
+        # print("selected_users:",selected_users)
 
         for user_id in selected_users:
             _user = User.objects.get(id=int(user_id))
+            
             _user_deatils = UserDetail.objects.get(user=_user)
+            # print(_user_deatils)
             if  _user_deatils.user.email:
-                print("EMAIL : ", _user_deatils.user.email)
                 obj = BloodRequestStatus.objects.create(
                     donner=_user, 
                     blood_group=_user_deatils.blood_group,
@@ -152,11 +140,15 @@ def send_donation_invitation(request):
                     )
                 obj.save()
                 
-                send_mail_user(request,user_detail=_user_deatils)        
-                
-
+                send_mail_user(
+                    user_detail = _user_deatils, 
+                    user_id = user_id,
+                    request_session_id = request_session.id,
+                    host="http://127.0.0.1:8000"
+                    
+                    )
             else:
-                print("USER : ", model_to_dict(_user))
+                print("Nothing to Show")
 
     return JsonResponse(data={
         "message":"Invitation Sent Successfully",
@@ -165,7 +157,31 @@ def send_donation_invitation(request):
 
 
 
+def update_inv_status(request, session_id, user_id, is_accepted):
     
+    print( session_id, user_id, is_accepted)
+    
+        
+    session_object = BloodRequestSession.objects.get(id =session_id )
+    user_object = User.objects.get(id =user_id )
+    print("session_object:",session_object)
+    print("user_object:",user_object)
+
+
+    request_status = BloodRequestStatus.objects.filter((Q(donner=user_object) & Q(session =session_object ))).update(invitation_status=is_accepted)
+    print(request_status)
+    return HttpResponse(f"Thank you {user_object.username.capitalize()} for {is_accepted} the invitation ")
+
+
+
+
+
+
+
+
+
+    
+
 
 
 

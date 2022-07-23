@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 # Create your models here.
-class BloodGroup(models.Model):
+class BloodGroup(models.Model   ):
     """
     BloodGroup
     
@@ -90,6 +90,7 @@ class BloodGroupSessionMapper(models.Model):
 
 
 class BloodRequestStatus(models.Model):
+    # uniq index (donner, session)
     INVITATION_STATUS_CHOICES = (
         ("PENDING", "pending"),
         ("ACCEPTED", "accepted"),
@@ -98,7 +99,7 @@ class BloodRequestStatus(models.Model):
     donner = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     blood_group = models.ForeignKey( BloodGroup, on_delete=models.CASCADE, related_name='bloodgroup')
     session = models.ForeignKey(BloodRequestSession, on_delete=models.CASCADE)
-    invitation_status = models.CharField(max_length=10, default='PENDING') # ['pending', 'accepted', 'denied']
+    invitation_status = models.CharField(max_length=10, default='PENDING', choices=INVITATION_STATUS_CHOICES) # ['pending', 'accepted', 'denied']
     donation_status = models.BooleanField(default=False) # [True, False]
     donation_date = models.DateField(null=True, blank=True)
     
