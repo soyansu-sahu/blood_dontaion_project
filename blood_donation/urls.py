@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path
 from myapp import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 
@@ -18,4 +20,8 @@ urlpatterns = [
     path('donate/send_invitation/',views.send_donation_invitation,name='send_invitation'),
     path('invitation_status_detail/<int:id>', views.view_session_detail, name='view_session_detail'),
     path('update_status/<int:session_id>/<int:user_id>/<str:is_accepted>',views.update_inv_status,name='update_status'),
+
 ]
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL,
+#                           document_root=settings.MEDIA_ROOT)

@@ -11,7 +11,7 @@ from datetime import datetime
 
 
 # Create your models here.
-class BloodGroup(models.Model   ):
+class BloodGroup(models.Model):
     """
     BloodGroup
     
@@ -23,6 +23,9 @@ class BloodGroup(models.Model   ):
 
     def __str__(self):
         return self.name
+
+    # class Meta:
+    #     default_related_name = 'bloodgroups'   
 
 class UserDetail(models.Model):
     """
@@ -39,6 +42,9 @@ class UserDetail(models.Model):
     is_donor = models.BooleanField(default=True)
     last_donated_date = models.DateField(null=True, blank=True)
 
+    # class Meta:
+    #     default_related_name = 'userdetail'
+
     def __str__(self):
         return str(self.user)
 
@@ -51,7 +57,7 @@ class BloodRequestSession(models.Model):
     the time limit
     at which address
 
-    [] Request Detais
+    [] Request Details
     """
     # id = models.IntegerField(primary_key=True)
     req_user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -61,11 +67,15 @@ class BloodRequestSession(models.Model):
     till_date = models.DateTimeField(default=now)
 
 
-    blood_groups = models.ManyToManyField(BloodGroup, through='BloodGroupSessionMapper',
-        related_name='requests', 
-    )
+    blood_groups = models.ManyToManyField(BloodGroup)
 
     # donner_invitation_status = models.OneToManyField('BloodRequestStatus', on_delete=models.CASCADE)
+    # class Meta:
+    #     default_related_name = 'bloodrequestsession'
+
+
+
+
 
     def __str__(self):
         return f"{self.id}_{self.req_user}"
