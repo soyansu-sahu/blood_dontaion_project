@@ -130,7 +130,7 @@ def send_donation_invitation(request):
                     user_id = user_id,
                     request_session_id = request_session.id,
                     # host="http://127.0.0.1:8000"
-                    host="request.META['HTTP_HOST']"
+                    host=request.META['HTTP_HOST']
                     
                     )
             else:
