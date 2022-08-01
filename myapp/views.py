@@ -1,3 +1,4 @@
+import http
 import json
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render,redirect
@@ -50,15 +51,20 @@ def see_all_request(request):
     This method shows a single user blood request sessions
         - Request Sessions []
     """
-
+    if request.user.is_superuser:
     # blod_req_sessions = BloodRequestSession.objects.prefetch_related('requests')#.order_by('-req_date')
-    blod_req_sessions = BloodRequestSession.objects.prefetch_related('blood_groups')
-    bloodrequestsession = []
-    for session_req in blod_req_sessions:
-        _temp_req_session = model_to_dict(session_req)
-        _temp_req_session["blood_groups"] = ', '.join(bloodgroup.name for bloodgroup in session_req.blood_groups.all())
-        bloodrequestsession.append(_temp_req_session)
+        blod_req_sessions = BloodRequestSession.objects.prefetch_related('blood_groups')
+    elif request.user.is_authenticated:
+        user = User.objects.get(username=request.user)
+        blod_req_sessions = BloodRequestSession.objects.filter(Q(req_user = user)).prefetch_related('blood_groups')
 
+        bloodrequestsession = []
+        for session_req in blod_req_sessions:
+            _temp_req_session = model_to_dict(session_req)
+            _temp_req_session["blood_groups"] = ', '.join(bloodgroup.name for bloodgroup in session_req.blood_groups.all())
+            bloodrequestsession.append(_temp_req_session)
+    else:
+        return HttpResponse("You don't have the access.")
     return render(request,"see_all_request.html",{"request_sessions": bloodrequestsession})        
 
 
@@ -149,7 +155,7 @@ def update_inv_status(request, session_id, user_id, is_accepted):
 
     request_status = BloodRequestStatus.objects.filter((Q(donner=user_object) & Q(session =session_object ))).update(invitation_status=is_accepted)
     print(request_status)
-    return HttpResponse(f"Thank you {user_object.username.capitalize()} for {is_accepted} the invitation ")
+    return HttpResponse(f"<h1 style='text-align:center'>Thank you {user_object.username.capitalize()} for {is_accepted} the invitation </h1>")
 
 
 def sign_up(request):
@@ -158,7 +164,7 @@ def sign_up(request):
         if fm.is_valid():
             messages.success(request,'Account created Sucessfully')
             fm.save()
-            return redirect('user_login')
+            return redirect('request_blood')
     else:
         fm = SignUpForm()        
     return render(request,'registration/signup.html',{'form':fm})
@@ -174,7 +180,7 @@ def user_login(request):
                 user = authenticate(username=uname, password=upass)
                 if user is not None:
                     login(request, user)
-                    return redirect('/')
+                    return redirect('request_blood')
         else:
             fm = AuthenticationForm()
         return render(request, 'registration/login.html', {'form': fm})

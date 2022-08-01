@@ -16,8 +16,7 @@ def send_mail_user(user_detail, user_id, request_session_id, host):
     message = get_template('send_mail.html')
 
     rendered = message.render(ctx)
-    print("message", rendered)
-    print()
+    
 
     msg = EmailMessage(
         'Subject',
